@@ -40,13 +40,9 @@ class TestLattice(BaseTest):
                                 (1),
                                 ([1, 1]),
                                 ([-1, 1, 1]),
-<<<<<<< HEAD
-                                ([1, 'a']),
-=======
                                 ([1, 1, 1, 1]),
                                 ([1, 'a']),
                                 (None),
->>>>>>> upstream/master
                                 ([]),
                                 ([None, None, None]),
                              ])
@@ -90,39 +86,6 @@ class TestLattice(BaseTest):
         space = [1, 1, 1]
         vectors = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
         angles = [90, 90, 90]
-<<<<<<< HEAD
-        with pytest.raises(ValueError):
-            mb.Lattice(lattice_spacing=space, lattice_vectors=vectors,
-                       angles=angles)
-
-    @pytest.mark.parametrize("type",
-                             [
-                                 ([1, 1, 1], 3, list()),
-                                 ([1, 1, 1], 3, tuple()),
-                                 ([1, 1, 1], 3, str())
-                             ]
-                             )
-    def test_basis_atoms_input_type(self, type):
-        with pytest.raises(TypeError):
-            mb.Lattice(lattice_spacing=[1, 1, 1], basis_atoms=type)
-
-    @pytest.mark.parametrize("vectors, angles",
-                             [
-                                ([[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-                                    [90, 90, 90])
-                             ]
-                             )
-    def test_proper_angles(self, vectors, angles):
-        testlattice = mb.Lattice(lattice_spacing=[1, 1, 1],
-                                  lattice_vectors=vectors)
-        np.testing.assert_allclose(testlattice.angles,
-                                   np.asarray(angles, dtype=np.float64),
-                                   rtol=1e-05, atol=1e-08, equal_nan=False)
-
-    @pytest.mark.parametrize("x, y, z",
-                              [
-                                (None, 1, 0),
-=======
         with pytest.raises(ValueError):
             mb.Lattice(lattice_spacing=space, lattice_vectors=vectors,
                        angles=angles)
@@ -185,7 +148,6 @@ class TestLattice(BaseTest):
                                 (None, 1, 0),
                                 (1, None, 1),
                                 (1, 1, None),
->>>>>>> upstream/master
                                 (-1, 1, 1),
                                 (1, -1, 1),
                                 (1, 1, -1),
