@@ -90,12 +90,12 @@ class Sc(Lattice):
     ----------
     dimension : int, default=3
         Dimension of the system of interest.
-    lattice_vectors : numpy array, shape=(dimension, dimension), optional
+    lattice_vectors : numpy array, shape=(3,3), optional
                       default=([1,0,0], [0,1,0], [0,0,1])
         Vectors that define edges of the cubic system.
     lattice_spacings : float, shape=1, required, default=None
         Length of unit cell edge.
-    basis_atoms : dictionary, shape={'id':[list of atom positions]},
+    lattice_points : dictionary, shape={'id':[list of atom positions]},
     default=[0, 0, 0]
         Location of all basis compounds in unit cell.
     angles : list-like,  shape=(dimension,), optional, default=None
