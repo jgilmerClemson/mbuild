@@ -11,7 +11,7 @@ __all__ = ['write_gsd']
 
 def write_gsd(structure, filename, ref_distance=1.0, ref_mass=1.0,
               ref_energy=1.0, rigid_bodies=None, shift_coords=True,
-              write_special_pairs=True):
+              write_special_pairs=True, moments_of_inertia=None):
     """Output a GSD file (HOOMD v2 default data format).
 
     Parameters
@@ -36,6 +36,9 @@ def write_gsd(structure, filename, ref_distance=1.0, ref_mass=1.0,
     write_special_pairs : bool, optional, default=True
         Writes out special pair information necessary to correctly use the OPLS fudged 1,4 interactions
         in HOOMD.
+    moments_of_inertia: dict key=rigid_id val=moment of inertia tensor, optional, default=None
+        If rigid bodies are present, provide a moment of inertia tensor as a 1x3 numpy array of floats
+        for each unique rigid body id. If left None, the default is [0,0,0] and treated as a point particle.
 
     Notes
     -----
@@ -75,7 +78,7 @@ def write_gsd(structure, filename, ref_distance=1.0, ref_mass=1.0,
         gsd_file.configuration.box = np.array([lx, ly, lz, xy, xz, yz])
 
     _write_particle_information(gsd_file, structure, xyz, ref_distance,
-            ref_mass, ref_energy, rigid_bodies)
+            ref_mass, ref_energy, rigid_bodies, moments_of_inertia)
     if write_special_pairs:
         _write_pair_information(gsd_file, structure)
     if structure.bonds:
@@ -89,7 +92,7 @@ def write_gsd(structure, filename, ref_distance=1.0, ref_mass=1.0,
     gsd.hoomd.create(filename, gsd_file)
 
 def _write_particle_information(gsd_file, structure, xyz, ref_distance,
-        ref_mass, ref_energy, rigid_bodies):
+        ref_mass, ref_energy, rigid_bodies, moments_of_inertia):
     """Write out the particle information.
 
     """
@@ -121,7 +124,22 @@ def _write_particle_information(gsd_file, structure, xyz, ref_distance,
     gsd_file.particles.charge = charges / charge_factor
 
     if rigid_bodies:
+        inertia_list = list()
         rigid_bodies = [-1 if body is None else body for body in rigid_bodies]
+        if isinstance(moments_of_inertia, dict):
+            for body in rigid_bodies:
+                if body == -1:
+                    inertia_list.append([0,0,0])
+                else:
+                    inertia_list.append(moments_of_inertia[body])
+        elif moments_of_inertia is None:
+            inertia_list.append([0,0,0])
+        else:
+            raise ValueError("Using rigid bodies also requires a moment "
+                             "of inertia to be provided. This can only "
+                             "be type None or dict, was provided: {}".format(
+                             type(moments_of_inertia)))
+        gsd_file.particles.moment_inertia = inertia_list
     gsd_file.particles.body = rigid_bodies
 
 def _write_pair_information(gsd_file, structure):
